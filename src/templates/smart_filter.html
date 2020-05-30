@@ -1,0 +1,101 @@
+<div class="container">
+    <div class="well">
+      <div class="text-right">
+        <h1>کد به کد</h1>
+        <p>آخرین آپدیت: {{time}}</p>
+      </div>
+      <div class="row table-responsive" style="padding: 0 15px;">
+        <table id="market" class="table col-xs-12 table-striped table-hover text-center table-condensed">
+            <thead >
+            <tr >
+              <th class='text-center success'>نماد</th>
+              <th class='text-center success'>تعداد معامله</th>
+              <th class='text-center success'>حجم معامله M</th>
+              <th class='text-center success'>قیمت پایانی</th>
+              <th class='text-center success'>درصد تغییر پایانی</th>
+              <th class='text-center success'>آخرین قیمت</th>
+              <th class='text-center success'>درصد تغییر آخرین</th>
+              <th class='text-center success'>حجم خرید حقیقی M</th>
+              <th class='text-center success'>حجم خرید حقوقی M</th>
+              <th class='text-center success'>حجم فروش حقیقی M</th>
+              <th class='text-center success'>حجم فروش حقوقی M</th>
+              <th class='text-center success'>درصد فروش حقوقی به کل</th>
+              <th class='text-center success'>درصد خرید حقوقی به کل</th>
+            </tr>
+            </thead>
+            <tbody>
+              {% for index, row in market.iterrows() %}
+                  {% if (row['volume']|int > 10000 and row['sell_ho_tot']|int < 100) %}
+                  <tr>
+                    <td><a href="stock/{{row['id']}}">{{row['symbol']}}</a></td>
+                    <td>{{row['count']}}</td>
+                    <td>{{"{:.2f}".format(row['volume']|int/1000000)}}</td>
+                    <td>{{"{0:,}".format(row['close_price']| int)}}</td>
+                    <td class="{{ 'bg-success' if (row['close_price']| int) >= (row['yesterday_price']| int) else 'bg-danger' }}">{{"{0:,}".format(((row['close_price']| int - row['yesterday_price']| int)/(row['yesterday_price']| int )*10000)|int / 100)}}</td>
+                    <td>{{"{0:,}".format(row['last_price']| int)}}</td>
+                    <td class="{{ 'bg-success' if (row['last_price']| int) >= (row['yesterday_price']| int) else 'bg-danger' }}">{{"{0:,}".format(((row['last_price']| int - row['yesterday_price']| int)/(row['yesterday_price']| int )*10000)|int / 100)}}</td>
+                    <td>{{'{:.2f}'.format(row['Buy_I_Volume']|int/1000000)}}</td>
+                    <td>{{'{:.2f}'.format(row['Buy_N_Volume']|int/1000000)}}</td>
+                    <td>{{'{:.2f}'.format(row['Sell_I_Volume']|int/1000000)}}</td>
+                    <td>{{'{:.2f}'.format(row['Sell_N_Volume']|int/1000000)}}</td>
+                    <td>{{row['sell_ho_tot']}}</td>
+                    <td>{{row['buy_ho_tot']}}</td>
+                  </tr>
+                  {% endif %}
+              {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+<div class="container">
+    <div class="well">
+      <div class="text-right" >
+        <h1>فیلتر هوشمند</h1>
+        <p>آخرین آپدیت: {{time}}</p>
+      </div>
+      <div class="row table-responsive" style="padding: 0 15px;">
+        <table id="smart_filter" class="table col-xs-12 table-striped table-hover text-center table-condensed">
+            <thead >
+                <tr >
+                    <th class='text-center success'>نماد</th>
+                    <th class='text-center success'>حجم صف خرید M</th>
+                    <th class='text-center success'>درصد تغییر پایانی</th>
+                    <th class='text-center success'>درصد تغییر آخرین</th>
+                    <th class='text-center success'>میانگین حجم معاملات M</th>
+                    <th class='text-center success'>حجم معامله M</th>
+                    <th class='text-center success'>حجم خرید حقیقی M</th>
+                    <th class='text-center success'>حجم خرید حقوقی M</th>
+                    <th class='text-center success'>حجم فروش حقیقی M</th>
+                    <th class='text-center success'>حجم فروش حقوقی M</th>
+                    <th class='text-center success'>درصد فروش حقوقی به کل</th>
+                    <th class='text-center success'>قدرت خرید حقیقی</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for index, row in smartmarket.iterrows() %}
+                    {% if (row['buy_ha_tot'] != "inf" and row['sell_ho_tot'] != "inf" and row['Sell_CountI'] != "0" and row['Buy_CountI'] != "0" and row['Sell_I_Volume'] != "0") %}
+                        {% if (row['sell_ho_tot']|int < 100 and row['volume']|int > 10000 and ((row['Buy_I_Volume']|int/row['Buy_CountI']|int)/(row['Sell_I_Volume']|int/row['Sell_CountI']|int))>=1) %}
+                          <tr>
+                            <td><a href="stock/{{row['id']}}">{{row['symbol']}}</a></td>
+                            <td class="{{ 'bg-danger' if row['saf'] == True else 'bg-success' }}">{{'{:.2f}'.format(row['buy_volume']|int/1000000) }}</td>
+                            <td class="{{ 'bg-success' if (row['close_price']| int) >= (row['yesterday_price']| int) else 'bg-danger' }}">{{"{0:,}".format(((row['close_price']| int - row['yesterday_price']| int)/(row['yesterday_price']| int )*10000)|int / 100)}}</td>
+                            <td class="{{ 'bg-success' if (row['last_price']| int) >= (row['yesterday_price']| int) else 'bg-danger' }}">{{"{0:,}".format(((row['last_price']| int - row['yesterday_price']| int)/(row['yesterday_price']| int )*10000)|int / 100)}}</td>
+                            <td class="{{ 'bg-success' if (row['volume']|int) > 1.5*(row['volume_mounth']|int) else 'bg-danger' }}">{{'{:.2f}'.format(row['volume_mounth']/1000000)}}</td>
+                            <td>{{'{:.2f}'.format(row['volume']|int/1000000) }}</td>
+                            <td>{{'{:.2f}'.format(row['Buy_I_Volume']|int/1000000)}}</td>
+                            <td>{{'{:.2f}'.format(row['Buy_N_Volume']|int/1000000)}}</td>
+                            <td>{{'{:.2f}'.format(row['Sell_I_Volume']|int/1000000)}}</td>
+                            <td>{{'{:.2f}'.format(row['Sell_N_Volume']|int/1000000)}}</td>
+                            <td>{{row['sell_ho_tot']}}</td>
+                            <td>{{'{:.2f}'.format((row['Buy_I_Volume']|int/row['Buy_CountI']|int)/(row['Sell_I_Volume']|int/row['Sell_CountI']|int))}}</td>
+                          </tr>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    </div>
+</div>

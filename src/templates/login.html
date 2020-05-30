@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <title>بورس ایران - ورود</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/iransans.css') }}">
+  <style>
+		/* * {
+		box-sizing: border-box;
+		}
+
+		*:focus {
+		outline: none;
+		} */
+		body {
+		background-color: #3498DB;
+		padding: 50px;
+		text-align: right;
+		direction: rtl;
+		}
+	
+		.login-screen {
+		background-color: #FFF;
+		padding: 20px;
+		border-radius: 5px
+		}
+		/* .login {
+		margin: 20px auto;
+		width: 300px;
+		
+
+		.app-title {
+		text-align: center;
+		color: #777;
+		}
+
+		.login-form {
+		text-align: center;
+		}
+		.control-group {
+		margin-bottom: 10px;
+		}
+
+		input {
+		text-align: center;
+		background-color: #ECF0F1;
+		border: 2px solid transparent;
+		border-radius: 3px;
+		font-size: 16px;
+		font-weight: 200;
+		font-family: inherit;
+		padding: 10px 0;
+		width: 250px;
+		transition: border .5s;
+		}
+
+		input:focus {
+		border: 2px solid #3498DB;
+		box-shadow: none;
+		}
+
+		.btn {
+		border: 2px solid transparent;
+		background: #3498DB;
+		color: #ffffff;
+		font-size: 16px;
+		line-height: 25px;
+		padding: 10px 0;
+		text-decoration: none;
+		text-shadow: none;
+		border-radius: 3px;
+		box-shadow: none;
+		transition: 0.25s;
+		display: block;
+		width: 250px;
+		margin: 0 auto;
+		}
+
+		.btn:hover {
+		background-color: #2980B9;
+		}
+
+		.login-link {
+		font-size: 12px;
+		color: #444;
+		display: block;
+		margin-top: 12px;
+		} */
+  </style>
+</head>
+{% block body %}
+
+<div class="container">
+	<div class="login-screen">
+		<h2>صفحه ورود</h2>
+		<form action="/login" method="POST">
+			<div class="form-group">
+				<label for="username">نام کاربری:</label>
+				<input type="text" class="form-control" placeholder="نام کاربری" name="username">
+			</div>
+			<div class="form-group">
+				<label for="password">رمز عبور:</label>
+				<input type="password" class="form-control" placeholder="رمز عبور" name="password">
+			</div>
+			<button type="submit" class="btn btn-primary">ورود</button>
+		</form>
+	</div>
+</div>
+<!-- 
+	<form action="/login" method="POST">
+		<div class="login">
+			<div class="login-screen">
+				<div class="app-title">
+					<h1>صفحه ورود</h1>
+				</div>
+				<div class="login-form">
+					<div class="control-group">
+						<input type="text" class="login-field" value="" placeholder="نام کاربری" name="username">
+						<label class="login-field-icon fui-user" for="login-name"></label>
+					</div>
+					<div class="control-group">
+						<input type="password" class="login-field" value="" placeholder="پسورد" name="password">
+						<label class="login-field-icon fui-lock" for="login-pass"></label>
+					</div>
+					<input type="submit" value="ورود" class="btn btn-primary btn-large btn-block">
+				</div>
+			</div>
+		</div>
+	</form> -->
+{% endblock %}

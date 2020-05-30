@@ -1,0 +1,43 @@
+<div class="container">
+<div class="well">
+    <div class="text-right" >
+    <h1>ارزش به بیلیون</h1>
+    <p> </p>
+    </div>
+    <div class="table-responsive" style="padding: 15px;">
+        <table id="values" class="table table-striped table-hover text-center table-condensed">
+            <thead >
+            <tr >
+                <th class='text-center success'>تاریخ</th>
+                <th class='text-center success'>زمان آپدیت</th>
+                <th class='text-center success'>ارزش خرید حقیقی</th>
+                <th class='text-center success'>ارزش خرید حقوقی</th>
+                <th class='text-center success'>ارزش فروش حقیقی</th>
+                <th class='text-center success'>ارزش فروش حقوقی</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for row in values_IN %}
+                    <tr>
+                        <td>{{row['date']}}</td>
+                        <td>{{row['time']}}</td>
+                        <td>{{'{:.2f}'.format(row['tot_Buy_I_Value'])}}</td>
+                        <td>{{'{:.2f}'.format(row['tot_Buy_N_Value'])}}</td>
+                        <td>{{'{:.2f}'.format(row['tot_Sell_I_Value'])}}</td>
+                        <td>{{'{:.2f}'.format(row['tot_Sell_N_Value'])}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="2" style="text-align: right;">میانگین:</th>
+                    <th id='Buy_I_avg' style="text-align: center;"></th>
+                    <th id='Buy_N_avg' style="text-align: center;"></th>
+                    <th id='Sell_I_avg' style="text-align: center;"></th>
+                    <th id='Sell_N_avg' style="text-align: center;"></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+</div>

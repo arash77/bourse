@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fa">
+  <head>
+    <title>{{symbol}} - سابقه سهم</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8"> 
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/iransans.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script>
+	$(document).ready(function() {
+		$('#market').DataTable({
+			stateSave: true,
+			lengthMenu: [ 10, 25, 50, 75, 100,500,1000,2000 ],
+			order:  [[ 0, 'asc' ]],
+			language: {
+				url: 'https://cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json'
+			}
+		});
+	} );
+	</script>
+	
+  </head>
+  <body>
+		<nav class="navbar navbar-default ">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					 <a class="navbar-brand" href="#">بورس ایران</a>
+				</div>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="list-group-item-info"><a href="/filter">فیلتر</a></li>
+					<li class="active"><a href="/">خانه</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class="container">
+			<div class="well text-right">
+				<h1><a href="../stock/{{id}}">{{symbol}}</a></h1>
+				  <p>سابقه معاملات</p>
+				  <p><a href="../client_history/{{id}}">حقیقی-حقوقی</a></p>
+				  <p><a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i={{id}}">اطلاعات نماد</a></p>
+			</div>
+		</div>
+		<div class="container">
+			<div class="col-xs-12 well">
+				<div class="chart" id="bargraph">
+					<script>
+						var graphs = {{plot | safe}};
+						var layout = {{layout | safe}};
+						Plotly.plot('bargraph', graphs, layout);
+					</script>
+				</div>
+			</div>
+			<div class="col-xs-12 well">
+				<table id="market" class="table table-striped table-hover text-center table-condensed">
+					<thead >
+					<tr >
+					  <th class='text-center success'>تاریخ</th>
+					  <th class='text-center success'>بیشترین قیمت</th>
+					  <th class='text-center success'>کمترین قیمت</th>
+					  <th class='text-center success'>اولین قیمت</th>
+					  <th class='text-center success'>قیمت پایانی</th>
+					  <th class='text-center success'>آخرین قیمت</th>
+					  <th class='text-center success'>قیمت دیروز</th>
+					  <th class='text-center success'>ارزش معاملات B</th>
+					  <th class='text-center success'>حجم معاملات M</th>
+					  <th class='text-center success'>تعداد معاملات</th>
+					  <th class='text-center success'>درصد تغییر</th>
+					</tr>
+					</thead>
+					<tbody>
+					  {% for index, row in hist.iterrows() %}
+						  <tr>
+								<td>{{row['date']}}</td>
+								<td>{{row['max_price']}}</td>
+								<td>{{row['min_price']}}</td>
+								<td>{{row['first_price']}}</td>
+								<td>{{row['close_price']}}</td>
+								<td>{{row['last_price']}}</td>
+								<td>{{row['yesterday_price']}}</td>
+								<td>{{'{:.2f}'.format(row['value']|int/1000000000)}}</td>
+								<td>{{'{:.2f}'.format(row['volume']|int/1000000)}}</td>
+								<td>{{row['count']}}</td>
+								{% if (row['yesterday_price']|int) != 0 %}
+								<td class="{{ 'bg-success' if (row['last_price']| int) >= (row['yesterday_price']| int) else 'bg-danger' }}">{{"{0:,}".format(((row['last_price']| int - row['yesterday_price']| int)/(row['yesterday_price']| int )*10000)|int / 100)}}</td>
+								{% else %}
+								<td class='bg-success'>{{"{0:,}".format(row['last_price']|int)}}</td>
+								{% endif %}
+						  </tr>
+					  {% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<nav class="fixed-bottom navbar-default">
+			<div class="container-fluid">
+				<span style="margin: 0 auto;display: block;width: 20%;"><a class="navbar-brand" style="text-align: center;" href="http://arash77.ir">کاری از آرش کدخدایی</a></span>
+			</div>
+		</nav>
+	</body>
+  
+</html>

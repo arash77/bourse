@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fa">
+  <head>
+    <title>بورس ایران - بنیادی</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8"> 
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/iransans.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+	<script>
+	$(document).ready(function() {
+		$('#market').DataTable({
+			language: {
+				url: 'https://cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json'
+			}
+		});
+	} );
+	</script>
+  </head>
+  <body style="padding-top: 20px;">
+	<div class="container">
+		<nav class="navbar navbar-default ">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" id="date"></a>
+				</div>
+				<div class="navbar-header">
+					<a class="navbar-brand" id="time"></a>
+				</div>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="list-group-item-info"><a href="/filter">فیلتر</a></li>
+					<li class="active"><a href="/">خانه</a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+
+		<div class="container">
+			<div class="well text-right">
+			  <h1>مرکز پردازش اطلاعات مالی ایران</h1>
+			</div>
+			<div class="table-responsive">
+			<table id="market" class="table  well table-striped table-hover text-center table-condensed">
+				<thead >
+				  <tr >
+					<th class='text-center success'>نماد</th>
+					<th class='text-center success'>قیمت</th>
+					<th class='text-center success'>درصد تغییر</th>
+					<th class='text-center success'>قیمت پایانی</th>
+					<th class='text-center success'>درصد تغییر 0.1</th>
+					<th class='text-center success'>تعداد</th>
+					<th class='text-center success'>حجم M</th>
+                    <th class='text-center success'>ارزش K</th>
+                    <th class='text-center success'>EPS</th>
+                    <th class='text-center success'>PE</th>
+                    <th class='text-center success'>سرمایه</th>
+                    <th class='text-center success'>نسبت جاری</th>
+                    <th class='text-center success'>نسبت بدهی</th>
+                    <th class='text-center success'>سود خالص</th>
+                    <th class='text-center success'>ROA</th>
+                    <th class='text-center success'>ROE</th>
+				  </tr>
+				</thead>
+				<tbody>
+					{% for index, row in market.iterrows() %}
+						<tr> 
+                            <td>{{row['symbol']}}</td>
+                            <td>{{row['price']}}</td>
+                            <td class="{{ 'bg-success' if (row['change']| int) >= 0 else 'bg-danger' }}">{{row['change']}}</td>
+                            <td>{{row['close_price']}}</td>
+                            <td class="{{ 'bg-success' if (row['change_2']| int) >= 0 else 'bg-danger' }}">{{row['change_2']}}</td>
+                            <td>{{row['count']}}</td>
+                            <td>{{'{:.2f}'.format(row['volume']|int/1000000)}}</td>
+                            <td>{{'{:.2f}'.format(row['value']|int/1000)}}</td>
+                            <td>{{row['EPS']}}</td>
+                            <td>{{row['PE']}}</td>
+                            <td>{{row['fund']}}</td>
+                            <td>{{row['current_ratio']}}</td>
+                            <td>{{row['debt_ratio']}}</td>
+                            <td class="{{ 'bg-success' if (row['net_profit']| int) >= 0 else 'bg-danger' }}">{{row['net_profit']}}</td>
+                            <td class="{{ 'bg-success' if (row['ROA']| int) >= 0 else 'bg-danger' }}">{{row['ROA']}}</td>
+                            <td class="{{ 'bg-success' if (row['ROE']| int) >= 0 else 'bg-danger' }}">{{row['ROE']}}</td>
+                        </tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			</div>
+		</div>
+		<nav class="fixed-bottom navbar-default">
+			<div class="container-fluid">
+				<span style="margin: 0 auto;display: block;width: 20%;"><a class="navbar-brand" style="text-align: center;" href="http://arash77.ir">کاری از آرش کدخدایی</a></span>
+			</div>
+		</nav>
+		<script>
+			setInterval(function(){
+				$.ajax({
+					url: '/update',
+					type: 'GET',
+					success: function(response) {
+						console.log(response);
+						$("#time").html(response["time"]);
+						$("#date").html(response["date"]);
+					},
+					error: function(error) {
+						console.log(error);
+					}
+				})
+			}, 1000);
+		</script>
+	</body>
+  
+</html>

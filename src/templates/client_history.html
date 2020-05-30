@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fa">
+  <head>
+    <title>{{symbol}} - حقیقی-حقوقی</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8"> 
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/iransans.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script>
+	$(document).ready(function() {
+		$('#market').DataTable({
+			order:  [[ 0, 'asc' ]],
+			language: {
+				url: 'https://cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json'
+			}
+		});
+	});
+	</script>
+	
+  </head>
+  <body>
+		<nav class="navbar navbar-default ">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					 <a class="navbar-brand" href="#">بورس ایران</a>
+				</div>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="list-group-item-info"><a href="/filter">فیلتر</a></li>
+					<li class="active"><a href="/">خانه</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class="container">
+			<div class="well text-right">
+			  <!-- <img src="straxico.jpg" class="img-rounded" alt="Cinque Terre" width="100" height="100">  -->
+			  <h1><a href="../stock/{{id}}">{{symbol}}</a></h1>			  
+			  <p>حقیقی - حقوقی</p>
+			  <p><a href="../history/{{id}}">سابقه معاملات</a></p>
+				<p><a href="http://www.tsetmc.com/loader.aspx?ParTree=151311&i={{id}}">اطلاعات نماد</a></p>
+			</div>
+		</div>
+		<div class="container">
+			<div class="col-xs-12 well">
+				<div class="chart" id="bargraph">
+					<script>
+						var graphs = {{plot | safe}};
+						Plotly.plot('bargraph',graphs,{'xcalendar': 'Persian', barmode: 'group', font: {family: 'Iransans'}});
+					</script>
+				</div>
+			</div>
+			<table id="market" class="table well table-striped table-hover text-center table-condensed">
+				<thead >
+				<tr >
+					<th class='text-center success'>تاریخ</th>
+					<th class='text-center success'>تعداد خرید حقیقی</th>		
+					<th class='text-center success'>تعداد خرید حقوقی</th>
+					<th class='text-center success'>تعداد فروش حقیقی</th>
+					<th class='text-center success'>تعداد فروش حقوقی</th>
+					<th class='text-center success'>حجم خرید حقیقی M</th>
+					<th class='text-center success'>حجم خرید حقوقی M</th>
+					<th class='text-center success'>حجم فروش حقیقی M</th>
+					<th class='text-center success'>حجم فروش حقوقی M</th>
+					<th class='text-center success'>حجم معاملات M</th>
+					<th class='text-center success'>درصد فروش حقوقی به کل</th>
+					<th class='text-center success'>درصد خرید حقوقی به کل</th>
+					<th class='text-center success'>درصد تغییر</th>
+				</tr>
+				</thead>
+				<tbody>
+					{% for index, row in hist.iterrows() %}
+						<tr> 
+							
+							<td>{{row['date']}}</td>
+							<td>{{row['haghighi_buy_count']}}</td>
+							<td>{{row['hoghughi_buy_count']}}</td>
+							<td>{{row['haghighi_sell_count']}}</td>
+							<td>{{row['hoghughi_sell_count']}}</td>
+							<td>{{'{:.2f}'.format(row['haghighi_buy_volume']|int/1000000)}}</td>
+							<td>{{'{:.2f}'.format(row['hoghughi_buy_volume']|int/1000000)}}</td>
+							<td>{{'{:.2f}'.format(row['haghighi_sell_volume']|int/1000000)}}</td>
+							<td>{{'{:.2f}'.format(row['hoghughi_sell_volume']|int/1000000)}}</td>
+							<td>{{'{:.2f}'.format(row['volume']|int/1000000)}}</td>
+							<td>{{row['sell_ho_tot']}}</td>
+							<td>{{row['buy_ho_tot']}}</td>
+							<td class="{{ 'bg-success' if (row['last_price']| int) >= (row['yesterday_price']| int) else 'bg-danger' }}">{{"{0:,}".format(((row['last_price']| int - row['yesterday_price']| int)/(row['yesterday_price']| int )*10000)|int / 100)}}</td>
+
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<nav class="fixed-bottom navbar-default">
+			<div class="container-fluid">
+				<span style="margin: 0 auto;display: block;width: 20%;"><a class="navbar-brand" style="text-align: center;" href="http://arash77.ir">کاری از آرش کدخدایی</a></span>
+			</div>
+		</nav>
+	</body>
+  
+</html>

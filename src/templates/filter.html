@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fa">
+  <head>
+    <title>بورس ایران - فیلتر ها</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8"> 
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/iransans.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+	<script src="https://cdn.datatables.net/plug-ins/1.10.20/api/average().js"></script>
+	<script>
+	$(document).ready(function() {
+		function smart_filter(){
+			$.ajax({
+				url: '/smart_filter',
+				type: 'GET',
+				success: function(response) {
+					$("#filters").html(response);
+					$('#smart_filter').DataTable({stateSave: true, language: {url: 'https://cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json'}});
+					$('#market').DataTable({stateSave: true, language: {url: 'https://cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json'}});
+				},
+				error: function(error) {
+					$("#filters").html('<div class="container well text-center"><h1>خطا در دریافت اطلاعات</h1></div>');
+				}
+			});
+			$.ajax({
+				url: '/update_value',
+				type: 'GET',
+				success: function(response) {
+					$("#values_IN").html(response);
+					var table = $('#values').DataTable({stateSave: true, language: {url: 'https://cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json'}});
+					$("#Buy_I_avg").html(table.column(2).data().average().toFixed(2));
+					$("#Buy_N_avg").html(table.column(3).data().average().toFixed(2));
+					$("#Sell_I_avg").html(table.column(4).data().average().toFixed(2));
+					$("#Sell_N_avg").html(table.column(5).data().average().toFixed(2));
+				},
+				error: function(error) {
+					$("#values_IN").html('<div class="well text-center"><h1>خطا در دریافت اطلاعات ارزش ها</h1></div>');
+				}
+			});
+			// $.ajax({
+			// 	url: '/alarm',
+			// 	type: 'GET',
+			// 	success: function(response) {
+			// 		$("#alarm").html(response);
+			// 		var table = $('#alarm_table').DataTable({stateSave: true, language: {url: 'https://cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json'}});
+			// 	},
+			// 	error: function(error) {
+			// 		$("#alarm").html('<div class="well text-center"><h1>خطا در دریافت اطلاعات ارزش ها</h1></div>');
+			// 	}
+			// });
+		}
+		function update_time(){
+			$.ajax({
+				url: '/update',
+				type: 'GET',
+				success: function(response) {
+					$("#time").html(response["time"]);
+					$("#date").html(response["date"]);
+				}
+			});
+		}
+		setInterval(update_time, 1000);
+		setInterval(smart_filter, 120000);
+		update_time();
+		smart_filter();
+	} );
+	</script>
+	
+  </head>
+  <body style="padding-top: 70px;">
+		<nav class="navbar navbar-fixed-top navbar-default ">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar" aria-expanded="true" aria-controls="navbar">
+						<span class="sr-only"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" id="date"></a>
+				</div>
+				<div id="navbar" class="navbar-collapse collapse in" aria-expanded="true">
+					<ul class="nav navbar-nav">
+						<li><a class="navbar-brand" id="time"></a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li class="list-group-item-info"><a href="/filter">فیلتر</a></li>
+						<li class="active"><a href="/">خانه</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<div id="filters"></div>
+		<!-- <div id="alarm"></div> -->
+		<div id="values_IN"></div>
+
+
+		<nav class="fixed-bottom navbar-default">
+			<div class="container-fluid">
+				<span style="margin: 0 auto;display: block;width: 20%;"><a class="navbar-brand" style="text-align: center;" href="http://arash77.ir">کاری از آرش کدخدایی</a></span>
+			</div>
+		</nav>
+	</body>
+  
+</html>

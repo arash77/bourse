@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fa">
+  <head>
+    <title>بورس ایران</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8"> 
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/iransans.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+	<script>
+	$(document).ready(function() {
+		$('#market').DataTable({
+			language: {
+				url: 'https://cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json'
+			}
+		});
+	} );
+	</script>
+  </head>
+  <body style="padding-top: 20px;">
+	<div class="container">
+		<nav class="navbar navbar-default ">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" id="date"></a>
+				</div>
+				<div class="navbar-header">
+					<a class="navbar-brand" id="time"></a>
+				</div>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="list-group-item-info"><a href="/filter">فیلتر</a></li>
+					<li class="active"><a href="/">خانه</a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+
+		<div class="container">
+			<div class="well text-right">
+			  <h1>بورس ایران</h1>
+			</div>
+			<div class="table-responsive">
+			<table id="market" class="table  well table-striped table-hover text-center table-condensed">
+				<thead >
+				  <tr >
+					<th class='text-center success'>نماد</th>
+					<th class='text-center success'>تعداد معامله</th>
+					<th class='text-center success'>حجم معامله</th>
+					<th class='text-center success'>قیمت پایانی</th>
+					<th class='text-center success'>درصد تغییر پایانی</th>
+					<th class='text-center success'>آخرین قیمت</th>
+					<th class='text-center success'>درصد تغییر آخرین</th>
+					<th class='text-center success'>گروه</th>
+				  </tr>
+				</thead>
+				<tbody>
+					{% for index, row in market.iterrows() %}
+						{% if (row['group_id']|int not in [68,44,23,27,64,69,56,11,13,59,45,42,34]) %}{% endif %}
+						<tr> 
+							<td><a href="stock/{{row['id']}}">{{row['symbol']}}</a></td>
+							<td>{{row['count']}}</td>
+							<td>{{"{0:,}".format(row['volume']| int) }}</td>
+							<td>{{"{0:,}".format(row['close_price']| int)}}</td>
+							<td class="{{ 'bg-success' if (row['close_price']| int) >= (row['yesterday_price']| int) else 'bg-danger' }}">{{"{0:,}".format(((row['close_price']| int - row['yesterday_price']| int)/(row['yesterday_price']| int )*10000)|int / 100)}}</td>
+							<td>{{"{0:,}".format(row['last_price']| int)}}</td>
+							<td class="{{ 'bg-success' if (row['last_price']| int) >= (row['yesterday_price']| int) else 'bg-danger' }}">{{"{0:,}".format(((row['last_price']| int - row['yesterday_price']| int)/(row['yesterday_price']| int )*10000)|int / 100)}}</td>
+							<td>{{row['group_id']}}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			</div>
+		</div>
+		<nav class="fixed-bottom navbar-default">
+			<div class="container-fluid">
+				<span style="margin: 0 auto;display: block;width: 20%;"><a class="navbar-brand" style="text-align: center;" href="http://arash77.ir">کاری از آرش کدخدایی</a></span>
+			</div>
+		</nav>
+		<script>
+			setInterval(function(){
+				$.ajax({
+					url: '/update',
+					type: 'GET',
+					success: function(response) {
+						console.log(response);
+						$("#time").html(response["time"]);
+						$("#date").html(response["date"]);
+					},
+					error: function(error) {
+						console.log(error);
+					}
+				})
+			}, 1000);
+		</script>
+	</body>
+  
+</html>
